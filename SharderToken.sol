@@ -228,7 +228,7 @@ contract SharderToken {
     * @dev Transfer tokens from one address to another
     * @param _from address The address which you want to send tokens from
     * @param _to address The address which you want to transfer to
-    * @param _approveTokensWithDecimal uint the amout of tokens to be transfered
+    * @param _transferTokensWithDecimal uint the amout of tokens to be transfered
     */
     function transferFrom(address _from, address _to, uint _transferTokensWithDecimal) public returns (bool success) {
         require(_transferTokensWithDecimal <= allowed[_from][msg.sender]);     // Check allowance
@@ -239,11 +239,11 @@ contract SharderToken {
 
     /**
     * @dev Gets the balance of the specified address.
-    * @param _addr The address to query the the balance of.
+    * @param _owner The address to query the the balance of.
     * @return An uint representing the amount owned by the passed address.
     */
-    function balanceOf(address _addr) internal constant returns (uint balance) {
-        return balances[_addr];
+    function balanceOf(address _owner) public constant returns (uint balance) {
+        return balances[_owner];
     }
 
     /**
@@ -364,7 +364,7 @@ contract SharderToken {
     /// 1 year = 31536000 seconds
     /// 0.5 year = 15768000 seconds
     function lockupAccount(address _address, uint _lockupSeconds) public onlyAdmin {
-        require((accountLockup[_address] && now > accountLockupTime[msg.sender]) || !accountLockup[_address]);
+        require((accountLockup[_address] && now > accountLockupTime[_address]) || !accountLockup[_address]);
 
         // frozen time = now + _lockupSeconds
         accountLockupTime[_address] = now + _lockupSeconds;
@@ -382,7 +382,7 @@ contract SharderToken {
     function closeCrowdsale() public onlyOwner afterEnd {
         require(!unsoldTokenIssued);
 
-        if (softCapReached()) {
+        if (totalEthReceived >= SOFT_CAP) {
             saleEndAtBlock = block.number;
             issueUnsoldToken();
             SaleSucceeded();
