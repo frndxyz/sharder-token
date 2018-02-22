@@ -104,13 +104,17 @@ contract SharderToken {
     uint256 internal constant FIRST_ROUND_ISSUED_SS = 350000000000000000000000000;
 
     /// Maximum amount of fund to be raised, the sale ends on reaching this amount.
-    /// We'll adjust hard cap in Feb. 21.
-    uint256 public constant HARD_CAP = 4 ether;
+    /// TestNetwork 1500 eth -> 1.5 eth
+    uint256 public constant HARD_CAP = 1500 finney;
 
-    uint256 public constant SOFT_CAP = 1 ether;
+    /// It will be refuned if this crowdsale can't acheive the soft cap, all ether will be refuned.
+    /// TestNetwork 1000 eth -> 1 eth
+    uint256 public constant SOFT_CAP = 1000 finney;
 
-    /// We'll adjust rate base the 7-day average close price (Feb.15 through Feb.21, 2018) on CoinMarketCap.com at Feb.21.
-    uint256 public constant BASE_RATE = 5000000;
+    /// 1 ether exchange rate
+    /// base the 7-day average close price (Feb.15 through Feb.21, 2018) on CoinMarketCap.com at Feb.21.
+    /// TestNetwork 20719 -> 20719000
+    uint256 public constant BASE_RATE = 20719000;
 
     /// 1 ether == 1000 finney
     /// Min contribution: 0.01 ether
@@ -137,7 +141,6 @@ contract SharderToken {
 
     /// Each phase contains exactly 15250 Ethereum blocks, which is roughly 3 days,
     /// See https://www.ethereum.org/crowdsale#scheduling-a-call
-    /// Test network set to 0.25 hour = 53 blocks, total time is 1 hour.
     uint internal constant BLOCKS_PER_PHASE = 2500;
 
     /// Crowdsale start block number.
@@ -348,7 +351,6 @@ contract SharderToken {
     /*
      * PUBLIC FUNCTIONS
      */
-
     ///@dev Set admin account.
     function setAdmin(address _address) public onlyOwner {
        admin=_address;
@@ -361,8 +363,7 @@ contract SharderToken {
     }
 
     /// @dev Lockup account till the date. Can't lockup again when this account locked already.
-    /// 1 year = 31536000 seconds
-    /// 0.5 year = 15768000 seconds
+    /// 1 year = 31536000 seconds , 0.5 year = 15768000 seconds
     function lockupAccount(address _address, uint _lockupSeconds) public onlyAdmin {
         require((accountLockup[_address] && now > accountLockupTime[_address]) || !accountLockup[_address]);
 
